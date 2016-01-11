@@ -6,19 +6,18 @@ local drawRect, drawLine, drawCircle, drawEllipse, drawPoints = MOAIDraw.drawRec
 return {
 	Rect = function( kwargs )
 		local width, height = kwargs.width or kwargs[1], kwargs.height or kwargs[2]
-		local penWidth, fill, line = kwargs.penWidth or 1, kwargs.fill, kwargs.line
+		local fill, line = kwargs.fill, kwargs.line
 		local hw, hh = 0.5 * width, 0.5 * height
 		local deck = newScriptDeck()
 		deck:setRect( -hw, -hh, hw, hh )
 		deck:setDrawCallback( function()
-			setPenWidth( penWidth )
-
 			if fill then
 				setPenColor( fill[1], fill[2], fill[3], fill[4] or 1.0 )
 				fillRect( -hw, -hh, hw, hh )
 			end
 
 			if line then
+				setPenWidth( line.width )
 				setPenColor( line[1], line[2], line[3], line[4] or 1.0 )
 				drawRect( -hw, -hh, hw, hh )
 			end
@@ -28,18 +27,17 @@ return {
 
 	Circle = function( kwargs )
 		local radius = kwargs.radius or kwargs[1]
-		local penWidth, fill, line = kwargs.penWidth or 1, kwargs.fill, kwargs.line
+		local fill, line = kwargs.fill, kwargs.line
 		local deck = newScriptDeck()
 		deck:setRect( -radius, -radius, radius, radius )
 		deck:setDrawCallback( function()
-			setPenWidth( penWidth )
-
 			if fill then
 				setPenColor( fill[1], fill[2], fill[3], fill[4] or 1.0 )
 				fillCircle( 0, 0, radius, steps or 32 )
 			end
 
 			if line then
+				setPenWidth( line.width )
 				setPenColor( line[1], line[2], line[3], line[4] or 1.0 )
 				drawCircle( 0, 0, radius, steps or 32 )
 			end
@@ -50,11 +48,10 @@ return {
 	Ellipse = function( kwargs )
 		local radiusX = kwargs.radiusX or kwargs[1]
 		local radiusY = kwargs.radiusY or kwargs[2]
-		local penWidth, fill, line = kwargs.penWidth or 1, kwargs.fill, kwargs.line
+		local fill, line = kwargs.fill, kwargs.line
 		local deck = newScriptDeck()
 		deck:setRect( -radiusX, -radiusY, radiusX, radiusY )
 		deck:setDrawCallback( function()
-			setPenWidth( penWidth )
 
 			if fill then
 				setPenColor( fill[1], fill[2], fill[3], fill[4] or 1.0 )
@@ -62,6 +59,7 @@ return {
 			end
 
 			if line then
+				setPenWidth( line.width or 1 )
 				setPenColor( line[1], line[2], line[3], line[4] or 1.0 )
 				drawEllipse( 0, 0, radiusX, radiusY, steps or 32 )
 			end
@@ -71,8 +69,7 @@ return {
 
 	Polygon =  function( kwargs )
 		local vertices = kwargs.vertices or kwargs
-		local penWidth, fill, line = kwargs.penWidth or 1, kwargs.fill, kwargs.line
-		local points, pointWidth = kwargs.points, kwargs.pointWidth or penWidth
+		local fill, line, point = kwargs.fill, kwargs.line, kwargs.point
 		local minx, miny, maxx, maxy = math.huge, math.huge, -math.huge, -math.huge
 
 		for i = 1, #vertices, 2 do
@@ -85,21 +82,20 @@ return {
 		local deck = newScriptDeck()
 		deck:setRect( minx, miny, maxx, maxy )
 		deck:setDrawCallback( function()
-			setPenWidth( penWidth )
-
 			if fill then
 				setPenColor( fill[1], fill[2], fill[3], fill[4] or 1.0 )
 				fillFan( vertices )
 			end
 
 			if line then
+				setPenWidth( line.width or 1 )
 				setPenColor( line[1], line[2], line[3], line[4] or 1.0 )
 				drawLine( vertices )
 			end
-
-			if points then
-				setPenWidth( pointWidth )
-				setPenColor( points[1], points[2], points[3], points[4] or 1.0 )
+			
+			if point then
+				setPenWidth( point.width or 1 )
+				setPenColor( point[1], point[2], point[3], point[4] or 1.0 )
 				drawPoints( vertices )
 			end
 		end )

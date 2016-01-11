@@ -63,19 +63,25 @@ local function translateMOAI( class )
 		local self = class.new()
 		if kwargs then
 			for name, args in pairs( kwargs ) do
-				local method = common[name]
-				if method then
-					if type( args ) == 'table' then
-						method( self, unpack( args ))
-					else
-						method( self, args )
+				if name == '_' then
+					for k, v in pairs( args ) do
+						self[k] = v
 					end
 				else
-					local method = derived[name]
+					local method = common[name]
 					if method then
-						method( self, args )
+						if type( args ) == 'table' then
+							method( self, unpack( args ))
+						else
+							method( self, args )
+						end
 					else
-						print( 'Unregistred method:' .. name )
+						local method = derived[name]
+						if method then
+							method( self, args )
+						else
+							print( 'Unregistred method:' .. name )
+						end
 					end
 				end
 			end
