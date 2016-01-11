@@ -103,7 +103,7 @@ Touch = {
 					local prop = props[j]
 					local handler = prop[event]
 					if handler then
-						if handler( prop, x_, y_, ... ) then
+						if handler( prop, self, x_, y_, ... ) then
 							return
 						end
 					end
