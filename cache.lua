@@ -1,6 +1,8 @@
-local newTexture = MOAITexture.new
-local newQuad = MOAIGfxQuad2D.new
-local newFont = MOAIFont.new
+local newTexture = _G.MOAITexture.new
+local newQuad = _G.MOAIGfxQuad2D.new
+local newFont = _G.MOAIFont.new
+
+assert( newTexture and newQuad and newFont, 'MOAI not found' )
 
 local cache = { 
 	textures = setmetatable({},{__mode = 'kv'}),
@@ -8,7 +10,7 @@ local cache = {
 	fonts = setmetatable({},{__mode = 'kv'}),
 }
 
-cache.Texture = function( k )
+function cache.Texture( k )
 	local texture = cache.textures[k] 
 	if not texture then
 		texture = newTexture()
@@ -18,7 +20,7 @@ cache.Texture = function( k )
 	return texture
 end
 
-cache.Quad = function( k )
+function cache.Quad( k )
 	local quad = cache.quads[k] 
 	if not quad then
 		local texture = cache.Texture( k )
@@ -37,8 +39,8 @@ local DIGITS = '01234567890'
 local PUNCTUATION = '.,;:\'"`?!'
 local SPECIAL = '~@#$%^&*/|\\<>+-()[]{}№'
 
-cache.Font = function( path, size, charcodes, dpi )
-	local dpi = dpi or 120
+function cache.Font( path, size, charcodes, dpi_ )
+	local dpi = dpi_ or 120
 	local k = ('%s_%d_%d_%s'):format( path, size, dpi, charcodes ) 
 	local font = cache.fonts[k]
 	if not font then

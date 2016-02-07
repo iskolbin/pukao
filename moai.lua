@@ -1,12 +1,12 @@
 local type, unpack = type, table.unpack or unpack
 
-local pukao = {}
+local moai = {}
 
 local function translateMOAI( class ) 
 	local common, derived = {}, {}
 	
-	local function translateReserve( name, reserve )
-		local name = name:match( 'reserve(%w+)s')
+	local function translateReserve( name_, reserve )
+		local name = name_:match( 'reserve(%w+)s')
 		local newName = name:sub( 1, 1 ):lower() .. name:sub( 2 ) .. 's'
 		local setter = class.getInterfaceTable()['set' .. name]
 		if setter then
@@ -25,14 +25,16 @@ local function translateMOAI( class )
 		end
 	end
 
-	local function translateInsert( name, insert )
-		local name = name:match( 'insert(%w+)' )
+	local function translateInsert( name_, insert )
+		local name = name_:match( 'insert(%w+)' )
 		local newName = name:sub( 1, 1 ):lower() .. name:sub( 2 ) .. 's'
 		derived[newName] = function( self, args )
-			if type( args[i] ) == 'table' then
-				insert( self, i, unpack( args[i] ))
-			else
-				insert( self, args[i] )
+			for i = 1, #args do
+				if type( args[i] ) == 'table' then
+					insert( self, i, unpack( args[i] ))
+				else
+					insert( self, args[i] )
+				end
 			end
 		end
 	end
@@ -48,7 +50,7 @@ local function translateMOAI( class )
 			translateReserve( name, method )
 		elseif name:match( 'insert(%w+)' ) then
 			translateInsert( name, method )
-		else
+		  --else
 			--print( 'Method not translated:', name )
 		end
 	end
@@ -76,9 +78,9 @@ local function translateMOAI( class )
 							method( self, args )
 						end
 					else
-						local method = derived[name]
-						if method then
-							method( self, args )
+						local method_ = derived[name]
+						if method_ then
+							method_( self, args )
 						else
 							print( 'Unregistred method:' .. name )
 						end
@@ -102,11 +104,11 @@ end
 for name, class in pairs( _G ) do
 	if type( name ) == 'string' and name:sub( 1, 4 ) == 'MOAI' then
 		if class.getInterfaceTable then
-			pukao[name:sub( 5 )] = translateMOAI( class )
+			moai[name:sub( 5 )] = translateMOAI( class )
 		else
-			pukao[name:sub( 5 )] = class
+			moai[name:sub( 5 )] = class
 		end
 	end
 end
 
-return pukao
+return moai

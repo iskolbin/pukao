@@ -1,3 +1,9 @@
+local MOAIScriptDeck = _G.MOAIScriptDeck
+local MOAIGfxDevice = _G.MOAIGfxDevice
+local MOAIDraw = _G.MOAIDraw
+
+assert( MOAIScriptDeck and MOAIGfxDevice and MOAIDraw, 'MOAI not found' )
+
 local newScriptDeck = MOAIScriptDeck.new
 local setPenColor, setPenWidth = MOAIGfxDevice.setPenColor, MOAIGfxDevice.setPenWidth
 local fillRect, fillFan, fillCircle, fillEllipse = MOAIDraw.fillRect, MOAIDraw.fillFan, MOAIDraw.fillCircle, MOAIDraw.fillEllipse
@@ -27,7 +33,7 @@ return {
 
 	Circle = function( kwargs )
 		local radius = kwargs.radius or kwargs[1]
-		local fill, line = kwargs.fill, kwargs.line
+		local fill, line, steps = kwargs.fill, kwargs.line, kwargs.steps
 		local deck = newScriptDeck()
 		deck:setRect( -radius, -radius, radius, radius )
 		deck:setDrawCallback( function()
@@ -48,7 +54,7 @@ return {
 	Ellipse = function( kwargs )
 		local radiusX = kwargs.radiusX or kwargs[1]
 		local radiusY = kwargs.radiusY or kwargs[2]
-		local fill, line = kwargs.fill, kwargs.line
+		local fill, line, steps = kwargs.fill, kwargs.line, kwargs.steps
 		local deck = newScriptDeck()
 		deck:setRect( -radiusX, -radiusY, radiusX, radiusY )
 		deck:setDrawCallback( function()
