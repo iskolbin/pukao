@@ -1,7 +1,7 @@
 # pukao
-Tiny set of helpers for MOAI SDK. Helpers independent from each other. Helpers don't pollute global namespace. Modules don't try to make MOAI highlevel like Rapanui/Hanappe/Flower frameworks (which is pointless IMHO), they just try to safe some keystrokes:).
+Tiny set of helpers for MOAI SDK. Helpers independent from each other. Helpers don't pollute global namespace. Modules don't try to make MOAI highlevel like Rapanui/Hanappe/Flower frameworks (which is pointless IMHO), they just try to safe some keystrokes and make code more declarative.
 
-## pukao
+## moai
 Allow declarative style of object constructing, i.e. instead of
 
 ```
@@ -12,12 +12,12 @@ prop:setRot( 0.5 )
 
 you can write:
 ```
-local prop = pukao.Prop2D{ loc = {100, 100}, rot = 0.5 }
+local prop = moai.Prop2D{ loc = {100, 100}, rot = 0.5 }
 ```
 
-special field: **_**, i.e. private args, table which copies to object fields without changes. Also you can specify second argument in constuctor like:
+special field: **_**, i.e. private args, table which copies to object fields without changes. Also you can specify second argument in constuctor which overrides **_** args. Example:
 ```
-local prop = pukao.Prop2D({ _ = {arg1 = 2, arg2 = 3}}, {arg2 = 4} )
+local prop = moai.Prop2D({ _ = {arg1 = 2, arg2 = 3}}, {arg2 = 4} )
 print( prop.arg1 ) -- 2
 print( prop.arg2 ) -- 4
 ```
@@ -48,7 +48,7 @@ To remove boilerplate of writing charcodes like 'abcdefhijklmopqrstuvwxyz0123456
 ## shape
 Declarative MOAIScriptDeck for shape drawing, used like:
 ```
-local prop = pukao.Prop2D{ deck = shape.Rect{ 10, 10, fill = {1,0,0}, line = {0,1,0,width = 2}}}
+local prop = moai.Prop2D{ deck = shape.Rect{ 10, 10, fill = {1,0,0}, line = {0,1,0,width = 2}}}
 ```
 will create rectangle filled with red, outlined with green stroke 2-pixel width. 
 
