@@ -1,6 +1,6 @@
 local type, unpack = type, table.unpack or unpack
 
-local moai = {}
+local Moai = {}
 
 local function translateMOAI( class ) 
 	local common, derived = {}, {}
@@ -104,11 +104,11 @@ end
 for name, class in pairs( _G ) do
 	if type( name ) == 'string' and name:sub( 1, 4 ) == 'MOAI' then
 		if class.getInterfaceTable then
-			moai[name:sub( 5 )] = translateMOAI( class )
+			Moai[name:sub( 5 )] = translateMOAI( class )
 		else
-			moai[name:sub( 5 )] = class
+			Moai[name:sub( 5 )] = class
 		end
 	end
 end
 
-return moai
+return Moai

@@ -1,7 +1,7 @@
 # pukao
 Tiny set of helpers for MOAI SDK. Helpers independent from each other. Helpers don't pollute global namespace. Modules don't try to make MOAI highlevel like Rapanui/Hanappe/Flower frameworks (which is pointless IMHO), they just try to safe some keystrokes and make code more declarative.
 
-## moai
+## Moai
 Allow declarative style of object constructing, i.e. instead of
 
 ```
@@ -12,29 +12,29 @@ prop:setRot( 0.5 )
 
 you can write:
 ```
-local prop = moai.Prop2D{ loc = {100, 100}, rot = 0.5 }
+local prop = Moai.Prop2D{ loc = {100, 100}, rot = 0.5 }
 ```
 
 special field: **_**, i.e. private args, table which copies to object fields without changes. Also you can specify second argument in constuctor which overrides **_** args. Example:
 ```
-local prop = moai.Prop2D({ _ = {arg1 = 2, arg2 = 3}}, {arg2 = 4} )
+local prop = Moai.Prop2D({ _ = {arg1 = 2, arg2 = 3}}, {arg2 = 4} )
 print( prop.arg1 ) -- 2
 print( prop.arg2 ) -- 4
 ```
 
-## cache
+## Cache
 Weak-linked caches for MOAITexture, MOAIGfxQuad2D, MOAIFont. Resources loaded once, assuming they are immutable.
 * textures loaded from file ( that's all ): 
 ```
-local texture = cache.Texture'assets/someimage.png'
+local texture = Cache.Texture'assets/someimage.png'
 ```
 * quads created from texture automatically ( cache.Texture called ):
 ```
-local quad = cache.Quad'assets/someimage.png' -- cache.Texture'assets/someimage.png' is created
+local quad = Cache.Quad'assets/someimage.png' -- cache.Texture'assets/someimage.png' is created
 ```
 * fonts created like:
 ```
-local font = cache.Font(path-to-font, font-size, charcodes,[dpi=120])
+local font = Cache.Font(path-to-font, font-size, charcodes,[dpi=120])
 ```
 To remove boilerplate of writing charcodes like 'abcdefhijklmopqrstuvwxyz01234567890' you can instead write '::ld' (lowercase letters and digits),another options are:
 - **l**, lowercase letters;
@@ -45,10 +45,10 @@ To remove boilerplate of writing charcodes like 'abcdefhijklmopqrstuvwxyz0123456
 - **p**, punctuation;
 - **s**, special symbols;
 
-## shape
+## Shape
 Declarative MOAIScriptDeck for shape drawing, used like:
 ```
-local prop = moai.Prop2D{ deck = shape.Rect{ 10, 10, fill = {1,0,0}, line = {0,1,0,width = 2}}}
+local prop = Moai.Prop2D{ deck = Shape.rect{ 10, 10, fill = {1,0,0}, line = {0,1,0,width = 2}}}
 ```
 will create rectangle filled with red, outlined with green stroke 2-pixel width. 
 
@@ -59,11 +59,11 @@ will create rectangle filled with red, outlined with green stroke 2-pixel width.
 
 note that **line** and **point** can have **width** parameter ( 1 by default ).
 
-## touch
+## Touch
 Simple common touch/mouse input handling. To use:
 ```
-local touch = require'touch'
-touch:install()
+local Touch = require'Touch'
+Touch:install()
 ```
 Now MOAIDeviceMgr.device.touch + pointer + mouseLeft/Right/Middle callbacks set. When you touch somewhere or click layers will be taken using MOAIRenderMgr.getRenderTable(). If layer set **passive** property it's ignored. Touch event propagated from top to bottom for all props in the layer which hit by click/touch. If entitites has event handlers they are called. Events:
 
@@ -73,6 +73,6 @@ Now MOAIDeviceMgr.device.touch + pointer + mouseLeft/Right/Middle callbacks set.
 
 Where **touchobj** is global object containing all current taps. For mouse users there are constants for **idx**:
 
-* **touchobj.LEFT**
-* **touchobj.RIGHT**
-* **touchobj.MIDDLE**
+* **Touch.LEFT**
+* **Touch.RIGHT**
+* **Touch.MIDDLE**

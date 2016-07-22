@@ -19,6 +19,11 @@ local Touch = {
 	RIGHT = RIGHT, 
 	MIDDLE = MIDDLE,
 
+	TOUCH_UP = TOUCH_UP,
+	TOUCH_DOWN = TOUCH_DOWN,
+	TOUCH_MOVE = TOUCH_MOVE,
+	TOUCH_CANCEL = TOUCH_CANCEL,
+
 	x = 0,
 	y = 0,
 	taps = {},
@@ -101,7 +106,7 @@ local function mouseMiddleCallback( down )
 end
 
 
-function Touch.processTouchEvent( self, x, y, event, ... )
+function Touch:processTouchEvent( x, y, event, ... )
 	self:emit( event, x, y, ... )
 	local layers = getRenderTable()
 	for i = #layers, 1, -1 do
@@ -122,36 +127,46 @@ function Touch.processTouchEvent( self, x, y, event, ... )
 	end
 end
 	
-function Touch.onTouchUp( self, idx, x, y ) 
+function Touch:onTouchUp( idx, x, y ) 
 	self:processTouchEvent( x, y, 'onTouchUp', idx ) 
 end
 	
-function Touch.onTouchDown( self, idx, x, y ) 
+function Touch:onTouchDown( idx, x, y ) 
 	self:processTouchEvent( x, y, 'onTouchDown', idx ) 
 end
 	
-function Touch.onTouchMove( self, idx, x, y, dx, dy ) 
+function Touch:onTouchMove( idx, x, y, dx, dy ) 
 	self:processTouchEvent( x, y, 'onTouchMove', idx, dx, dy ) 
 end
 
-function Touch.install()
-	if MOAIInputMgr.device.touch then 
+function Touch.install(...)
+	local all = false
+	local args = {...}
+	if #args == 0 then
+		all = true
+	else
+		for _, v in pairs( install ) do
+			args[v] = true
+		end
+	end
+
+	if all or args.touch or MOAIInputMgr.device.touch then 
 		MOAIInputMgr.device.touch:setCallback( touchCallback ) 
 	end
 
-	if MOAIInputMgr.device.pointer then
+	if all or args.pointer or MOAIInputMgr.device.pointer then
 		MOAIInputMgr.device.pointer:setCallback( pointerCallback )
 	end
 
-	if MOAIInputMgr.device.mouseLeft then
+	if all or args.mouseLeft or MOAIInputMgr.device.mouseLeft then
 		MOAIInputMgr.device.mouseLeft:setCallback( mouseLeftCallback )
 	end
 
-	if MOAIInputMgr.device.mouseRight then
+	if all or args.mouseRight or MOAIInputMgr.device.mouseRight then
 		MOAIInputMgr.device.mouseRight:setCallback( mouseRightCallback )
 	end
 
-	if MOAIInputMgr.device.mouseMiddle then
+	if all or args.mouseMiddle or MOAIInputMgr.device.mouseMiddle then
 		MOAIInputMgr.device.mouseMiddle:setCallback( mouseMiddleCallback )
 	end
 end

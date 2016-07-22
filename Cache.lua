@@ -4,31 +4,31 @@ local newFont = _G.MOAIFont.new
 
 assert( newTexture and newQuad and newFont, 'MOAI not found' )
 
-local cache = { 
-	textures = setmetatable({},{__mode = 'kv'}),
-	quads = setmetatable({},{__mode = 'kv'}),
-	fonts = setmetatable({},{__mode = 'kv'}),
+local Cache = { 
+	_textures = setmetatable({},{__mode = 'kv'}),
+	_quads = setmetatable({},{__mode = 'kv'}),
+	_fonts = setmetatable({},{__mode = 'kv'}),
 }
 
-function cache.Texture( k )
-	local texture = cache.textures[k] 
+function Cache.Texture( k )
+	local texture = cache._textures[k] 
 	if not texture then
 		texture = newTexture()
 		texture:load( k ) 
-		cache.textures[k] = texture
+		cache._textures[k] = texture
 	end
 	return texture
 end
 
-function cache.Quad( k )
-	local quad = cache.quads[k] 
+function Cache.Quad( k )
+	local quad = cache._quads[k] 
 	if not quad then
 		local texture = cache.Texture( k )
 		local w, h = texture:getSize()
 		quad = newQuad()
 		quad:setTexture( texture )
 		quad:setRect( -0.5*w, -0.5*h, 0.5*w, 0.5*h )
-		cache.quads[k] = quad
+		cache._quads[k] = quad
 	end
 	return quad
 end
@@ -39,10 +39,10 @@ local DIGITS = '01234567890'
 local PUNCTUATION = '.,;:\'"`?!'
 local SPECIAL = '~@#$%^&*/|\\<>+-()[]{}№'
 
-function cache.Font( path, size, charcodes, dpi_ )
+function Cache.Font( path, size, charcodes, dpi_ )
 	local dpi = dpi_ or 120
 	local k = ('%s_%d_%d_%s'):format( path, size, dpi, charcodes ) 
-	local font = cache.fonts[k]
+	local font = cache._fonts[k]
 	if not font then
 		if charcodes:sub(1,2) == '::' then
 			local charcodes_ = ' \n\t'
@@ -64,9 +64,9 @@ function cache.Font( path, size, charcodes, dpi_ )
 		font:load( path )
 		font:setDefaultSize( size, dpi )
 		font:preloadGlyphs( charcodes, size, dpi )
-		cache.fonts[k] = font	
+		cache._fonts[k] = font	
 	end
 	return font
 end
 
-return cache
+return Cache
