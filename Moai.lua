@@ -2,7 +2,7 @@ local type, unpack, pairs = type, table.unpack or unpack, pairs
 
 local Moai = {}
 
-local function translateReserve( name_, reserve, derived )
+local function translateReserve( class, name_, reserve, derived )
 	local name = name_:match( 'reserve(%w+)s')
 	local newName = name:sub( 1, 1 ):lower() .. name:sub( 2 ) .. 's'
 	local setter = class.getInterfaceTable()['set' .. name]
@@ -44,7 +44,7 @@ local function translateMOAI( class )
 		elseif name:sub( 1, 4 ) == 'init' then
 			common[name:sub( 5, 5 ):lower() .. name:sub( 6 )] = method
 		elseif name:match( 'reserve(%w+)s' ) then
-			translateReserve( name, method, derived )
+			translateReserve( class, name, method, derived )
 		elseif name:match( 'insert(%w+)' ) then
 			translateInsert( name, method, derived )
 		  --else
