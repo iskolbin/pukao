@@ -5,7 +5,7 @@ local MOAIDraw = _G.MOAIDraw
 assert( MOAIScriptDeck and MOAIGfxDevice and MOAIDraw, 'MOAI not found' )
 
 local newScriptDeck = MOAIScriptDeck.new
-local setPenColor, setPenWidth = MOAIGfxDevice.setPenColor, MOAIGfxDevice.setPenWidth
+local setPenColor, setPenWidth, setPointSize = MOAIGfxDevice.setPenColor, MOAIGfxDevice.setPenWidth, MOAIGfxDevice.setPointSize
 local fillRect, fillFan, fillCircle, fillEllipse = MOAIDraw.fillRect, MOAIDraw.fillFan, MOAIDraw.fillCircle, MOAIDraw.fillEllipse
 local drawRect, drawLine, drawCircle, drawEllipse, drawPoints = MOAIDraw.drawRect, MOAIDraw.drawLine, MOAIDraw.drawCircle, MOAIDraw.drawEllipse, MOAIDraw.drawPoints
 
@@ -101,7 +101,7 @@ function Shape.Polygon( kwargs )
 		end
 
 		if point then
-			setPenWidth( point.width or 1 )
+			setPointSize( point.size or 1 )
 			setPenColor( point[1], point[2], point[3], point[4] or 1.0 )
 			drawPoints( vertices )
 		end
