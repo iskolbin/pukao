@@ -14,7 +14,7 @@ local LEFT = 1
 local RIGHT = 2
 local MIDDLE = 3
 
-local Touch = {
+local touch = {
 	LEFT = LEFT,
 	RIGHT = RIGHT, 
 	MIDDLE = MIDDLE,
@@ -33,63 +33,63 @@ local Touch = {
 }
  
 local function touchCallback( eventType, idx, x, y, tapCount )
-	Touch.tapCount = tapCount
-	Touch.x = x
-	Touch.y = y
+	touch.tapCount = tapCount
+	touch.x = x
+	touch.y = y
 
 	if eventType == TOUCH_UP then
-		Touch.taps[idx] = nil
-		Touch:onTouchUp( idx, x, y )
+		touch.taps[idx] = nil
+		touch.ontouchup( idx, x, y )
 
 	elseif eventType == TOUCH_DOWN then
-		Touch.taps[idx] = {x0 = x, y0 = y, x = x, y = y, dx = 0, dy = 0}
-		Touch:onTouchDown( idx, x, y )
+		touch.taps[idx] = {x0 = x, y0 = y, x = x, y = y, dx = 0, dy = 0}
+		touch.ontouchdown( idx, x, y )
 
 	elseif eventType == TOUCH_MOVE then
-		local tap = Touch.taps[idx]
+		local tap = touch.taps[idx]
 		if not tap then
-			Touch.taps[idx] = {x0 = x, y0 = y, x = x, y = y, dx = 0, dy = 0}
-			Touch:onTouchDown( idx, x, y )
+			touch.taps[idx] = {x0 = x, y0 = y, x = x, y = y, dx = 0, dy = 0}
+			touch.ontouchdown( idx, x, y )
 		else
 			local dx, dy = x - tap.x, y - tap.y
 			tap.dx, tap.dy = dx, dy
 			tap.x, tap.y = x, y
-			Touch:onTouchMove( idx, x, y, dx, dy )
+			touch.ontouchmove( idx, x, y, dx, dy )
 		end  
 	elseif eventType == TOUCH_CANCEL then
-		Touch.taps = {}
-		Touch.tapCount = 0
-		Touch:onTouchCancel()
+		touch.taps = {}
+		touch.tapCount = 0
+		touch.ontouchcancel( idx, x, y )
 	end
 end
 	
 local function pointerCallback( x, y )
-	local dx, dy = x - Touch.x, y - Touch.y
-	Touch.x = x
-	Touch.y = y
-	for idx, tap in pairs( Touch.taps ) do
+	local dx, dy = x - touch.x, y - touch.y
+	touch.x = x
+	touch.y = y
+	for idx, tap in pairs( touch.taps ) do
 		tap.x, tap.y, tap.dx, tap.dy = x, y, dx, dy
-		Touch:onTouchMove( idx, x, y, dx, dy ) 
+		touch.ontouchmove( idx, x, y, dx, dy ) 
 	end
-	Touch:onTouchMove( 0, x, y, dx, dy ) 
+	touch.ontouchmove( 0, x, y, dx, dy ) 
 end
 
 local function updateTapCount() 
-	Touch.tapCount = 0
-	if Touch.taps[LEFT] then Touch.tapCount = Touch.tapCount + 1 end
-	if Touch.taps[RIGHT] then Touch.tapCount = Touch.tapCount + 1 end
-	if Touch.taps[MIDDLE] then Touch.tapCount = Touch.tapCount + 1 end
+	touch.tapCount = 0
+	if touch.taps[LEFT] then touch.tapCount = touch.tapCount + 1 end
+	if touch.taps[RIGHT] then touch.tapCount = touch.tapCount + 1 end
+	if touch.taps[MIDDLE] then touch.tapCount = touch.tapCount + 1 end
 end
 
 local function onMouse( button, down )
 	if down then
-		Touch.taps[button] = { x = Touch.x, y = Touch.y }
+		touch.taps[button] = { x = touch.x, y = touch.y }
 		updateTapCount()
-		Touch:onTouchDown( button, Touch.x, Touch.y )
+		touch.ontouchdown( button, touch.x, touch.y )
 	else
-		Touch.taps[button] = nil
+		touch.taps[button] = nil
 		updateTapCount()
-		Touch:onTouchUp( button, Touch.x, Touch.y )
+		touch.ontouchup( button, touch.x, touch.y )
 	end
 end
 
@@ -106,7 +106,7 @@ local function mouseMiddleCallback( down )
 end
 
 
-function Touch:processTouchEvent( x, y, event, ... )
+function touch.process( event, x, y, ... )
 	self:emit( event, x, y, ... )
 	local layers = getRenderTable()
 	for i = #layers, 1, -1 do
@@ -118,7 +118,7 @@ function Touch:processTouchEvent( x, y, event, ... )
 				local prop = props[j]
 				local handler = prop[event]
 				if handler then
-					if handler( prop, self, x_, y_, ... ) then
+					if handler( prop, touch, x_, y_, ... ) then
 						return
 					end
 				end
@@ -127,19 +127,23 @@ function Touch:processTouchEvent( x, y, event, ... )
 	end
 end
 	
-function Touch:onTouchUp( idx, x, y ) 
-	self:processTouchEvent( x, y, 'onTouchUp', idx ) 
+function touch.ontouchup( idx, x, y ) 
+	touch.process( 'onTouchUp', x, y, idx ) 
 end
 	
-function Touch:onTouchDown( idx, x, y ) 
-	self:processTouchEvent( x, y, 'onTouchDown', idx ) 
+function touch.ontouchdown( idx, x, y ) 
+	touch.process( 'onTouchDown', x, y, idx ) 
 end
 	
-function Touch:onTouchMove( idx, x, y, dx, dy ) 
-	self:processTouchEvent( x, y, 'onTouchMove', idx, dx, dy ) 
+function touch.ontouchmove( idx, x, y, dx, dy ) 
+	touch.process( 'onTouchMove', x, y, idx, dx, dy ) 
 end
 
-function Touch.install(...)
+function touch.ontouchcancel( idx, x, y )
+	touch.process( 'onTouchCancel', x, y, idx )
+end
+
+function touch.install(...)
 	local all = false
 	local args = {...}
 	if #args == 0 then
@@ -171,4 +175,4 @@ function Touch.install(...)
 	end
 end
 
-return Touch
+return touch

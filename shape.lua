@@ -9,9 +9,9 @@ local setPenColor, setPenWidth, setPointSize = MOAIGfxDevice.setPenColor, MOAIGf
 local fillRect, fillFan, fillCircle, fillEllipse = MOAIDraw.fillRect, MOAIDraw.fillFan, MOAIDraw.fillCircle, MOAIDraw.fillEllipse
 local drawRect, drawLine, drawCircle, drawEllipse, drawPoints = MOAIDraw.drawRect, MOAIDraw.drawLine, MOAIDraw.drawCircle, MOAIDraw.drawEllipse, MOAIDraw.drawPoints
 
-local Shape = {}
+local shape = {}
 
-function Shape.Rect( kwargs )
+function shape.Rect( kwargs )
 	local width, height = kwargs.width or kwargs[1], kwargs.height or kwargs[2]
 	local fill, line = kwargs.fill, kwargs.line
 	local hw, hh = 0.5 * width, 0.5 * height
@@ -32,7 +32,7 @@ function Shape.Rect( kwargs )
 	return deck
 end
 
-function Shape.Circle( kwargs )
+function shape.Circle( kwargs )
 	local radius = kwargs.radius or kwargs[1]
 	local fill, line, steps = kwargs.fill, kwargs.line, kwargs.steps
 	local deck = newScriptDeck()
@@ -52,7 +52,7 @@ function Shape.Circle( kwargs )
 	return deck
 end
 
-function Shape.Ellipse( kwargs )
+function shape.Ellipse( kwargs )
 	local radiusX = kwargs.radiusX or kwargs[1]
 	local radiusY = kwargs.radiusY or kwargs[2]
 	local fill, line, steps = kwargs.fill, kwargs.line, kwargs.steps
@@ -74,7 +74,7 @@ function Shape.Ellipse( kwargs )
 	return deck
 end
 
-function Shape.Polygon( kwargs )
+function shape.Polygon( kwargs )
 	local vertices = kwargs.vertices or kwargs
 	local fill, line, point = kwargs.fill, kwargs.line, kwargs.point
 	local minx, miny, maxx, maxy = math.huge, math.huge, -math.huge, -math.huge
@@ -109,4 +109,4 @@ function Shape.Polygon( kwargs )
 	return deck
 end
 
-return Shape
+return shape

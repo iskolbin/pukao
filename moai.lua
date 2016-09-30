@@ -1,6 +1,6 @@
 local type, unpack, pairs = type, table.unpack or unpack, pairs
 
-local Moai = {}
+local moai = {}
 
 local function translateReserve( class, name_, reserve, derived )
 	local name = name_:match( 'reserve(%w+)s')
@@ -101,11 +101,11 @@ end
 for name, class in pairs( _G ) do
 	if type( name ) == 'string' and name:sub( 1, 4 ) == 'MOAI' then
 		if class.getInterfaceTable then
-			Moai[name:sub( 5 )] = translateMOAI( class )
+			moai[name:sub( 5 )] = translateMOAI( class )
 		else
-			Moai[name:sub( 5 )] = class
+			moai[name:sub( 5 )] = class
 		end
 	end
 end
 
-return Moai
+return moai
